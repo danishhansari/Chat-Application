@@ -1,4 +1,4 @@
-$(".submit-btn").click(function() {
+$(".submit-btn").click(async function() {
     let data = {
         name: $('#name').val(),
         roomId: $("#room-id").val()
@@ -7,13 +7,14 @@ $(".submit-btn").click(function() {
         alert("Name is required")
     }else{
         if(data.roomId === ""){
-            $.ajax({
+            await $.ajax({
                 "url":"/generate-room-id",
                 "type": "get",
                 "success": function(resp){
-                    console.log(resp.roomId)
+                    data.roomId = resp.roomId
                 }
             })
         }
         }
+     window.location.href = `/chat?name=${data.name}&roomId=${data.roomId}`
 })

@@ -7,10 +7,10 @@ const { Server } = require("socket.io");
 const uuid = require("uuid");
 
 const app = express();
-const httpServer = createServer();
+const httpServer = createServer(app);
 
+const io = new Server(httpServer)
 
-const io = new Server(httpServer, { /* options */ });
 app.set('view engine','ejs')
 app.use("/static", express.static('public'))
 
@@ -26,6 +26,15 @@ app.get('/generate-room-id', (req, res) => {
   let roomId = uuid.v4();
   res.status(200).send({"roomId":roomId})
 })
+app.get('/chat', (req, res) => {
+  io.sockets.emit("create", req.query.roomId);
+  res.render('pages/chat')
+})
+io.sockets.on('connection', function(socket) {
+  socket.on('create', function(roomId) {
+    socket.join(roomId);
+  });
+});
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

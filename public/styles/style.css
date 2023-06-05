@@ -12,3 +12,23 @@
     border-radius: 10rem;
     width: 100%;
 }
+#chat-area{
+    height: 100vh;
+    background-color: #7c9af2;
+}
+#chat-msg{
+    width: 95vw;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translate(-50%);
+    display: flex;
+}
+#chat-msg button{
+    background: white;
+    color: #0040ff;
+    padding: .5em;
+    border-radius: 15px;
+    outline: none;
+    border: none;
+}
