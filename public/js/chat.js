@@ -10,13 +10,45 @@ $(document).ready(function(){
 
     socket.emit("join-room", name , roomId)
 })
-socket.on("user-connected", (name) => {
+
+socket.on("user-connected", (userName) => {
     let html = `
         <div class="row">
         <div class="col-12 col-md-12 col-lg-12">
-            ${name} just join the room
+        ${userName} just joined the room!
+        </div>
+        </div>
+    `;
+    $("#chat-area").append(html);
+});
+
+$(".send-msg").click(function(){
+    let msg = $("#chat-msg").val();
+    if(msg === ""){
+        ;
+    } else{
+        socket.emit("message", name, roomId, msg);
+        let html = `
+        <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+        Me: ${msg}
         </div>
         </div>
     `;
     $("#chat-area").append(html)
+    $("#chat-msg").val("");
+    }
 })
+socket.on("receive-msg", (userName, msg) => {
+    if(name !== userName){
+        let html = `
+        <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+        ${userName}: ${msg}
+        </div>
+        </div>
+    `;
+    $("#chat-area").append(html)
+    $("#chat-msg").val("");
+    }
+} )

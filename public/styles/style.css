@@ -15,20 +15,26 @@
 #chat-area{
     height: 100vh;
     background-color: #7c9af2;
+    overflow: hidden;
 }
 #chat-msg{
-    width: 95vw;
+    width: 90vw;
     position: absolute;
     bottom: 50px;
     left: 50%;
     transform: translate(-50%);
-    display: flex;
+    padding: .5em;
+    outline: none;
+    border: none;
 }
-#chat-msg button{
-    background: white;
+.send-msg{
+    position: absolute;
+    bottom: 50px;
+    right:20px;
     color: #0040ff;
     padding: .5em;
     border-radius: 15px;
     outline: none;
     border: none;
+    background: white;
 }

@@ -32,20 +32,13 @@ app.get('/generate-room-id', (req, res) => {
   let roomId = uuid.v4();
   res.status(200).send({"roomId":roomId})
 })
-
-// io.sockets.on('connection', function(socket) {
-//   socket.on('create', function(roomId) {
-//     socket.join(roomId);
-//   });
-//   socket.on("send", function(roomId, name, msg){
-//     io.to(roomId).emit({"name": name, "msg": msg})
-//   })
-// });
 io.on("connection", (socket) => {
   socket.on("join-room", (name, roomId) => {
-    console.log(name)
     socket.join(roomId);
     io.to(roomId).emit("user-connected", name)
+  })
+  socket.on("message", (name, roomId, message) => {
+    io.to(roomId).emit("receive-msg", name, message);
   })
 })
 httpServer.listen(port, () => {
