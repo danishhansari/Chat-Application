@@ -12,12 +12,33 @@ const Room = () => {
   const [messageBody, setMessageBody] = useState("");
   useEffect(() => {
     getMessages();
-    client.subscribe(
+    const unsubscribe = client.subscribe(
       `databases.${DATABASES_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`,
       (response) => {
         console.log("Real time work ", response);
+        if (
+          response.events.includes(
+            "databases.*.collections.*.documents.*.create"
+          )
+        ) {
+          console.log("A message was created");
+          setMessages((prevState) => [response.payload, ...prevState]);
+        }
+        if (
+          response.events.includes(
+            "databases.*.collections.*.documents.*.delete"
+          )
+        ) {
+          console.log("A message was delete");
+          setMessages((prevState) =>
+            messages.filter((message) => message.$id !== response.payload.$id)
+          );
+        }
       }
     );
+    return () => {
+      unsubscribe();
+    };
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +52,6 @@ const Room = () => {
       payload
     );
     console.log("Created", response);
-    setMessages((prevState) => [response, ...messages]);
     setMessageBody("");
   };
 
@@ -46,9 +66,6 @@ const Room = () => {
 
   const deleteMessages = async (messageId) => {
     databases.deleteDocument(DATABASES_ID, COLLECTION_ID_MESSAGES, messageId);
-    setMessages((prevState) =>
-      messages.filter((message) => message.$id !== messageId)
-    );
   };
 
   return (
