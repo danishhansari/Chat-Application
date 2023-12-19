@@ -33,8 +33,8 @@ const Room = () => {
           )
         ) {
           console.log("A message was delete");
-          setMessages((prevState) =>
-            messages.filter((message) => message.$id !== response.payload.$id)
+          setMessages((prev) =>
+            prev.filter((message) => message.$id !== response.payload.$id)
           );
         }
       }
