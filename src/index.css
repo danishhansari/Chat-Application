@@ -142,7 +142,9 @@ textarea {
   display: flex;
   justify-content: flex-end;
 }
-
+.message--container {
+  padding-block: 1rem;
+}
 .message--wrapper {
   display: flex;
   flex-wrap: wrap;

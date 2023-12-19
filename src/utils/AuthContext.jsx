@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { account } from "../../appwriteConfig";
 import { useNavigate } from "react-router-dom";
+import { ID } from "appwrite";
 
 const AuthContext = createContext();
 
@@ -10,8 +11,24 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(false);
+    getUserOnLoad();
   }, []);
+
+  const getUserOnLoad = async () => {
+    try {
+      const accountDetails = await account.get();
+      setUser(accountDetails);
+      console.log("accountDetails", accountDetails.name);
+    } catch (error) {
+      console.info(error);
+    }
+    setLoading(false);
+  };
+
+  const handleUserLogout = async () => {
+    await account.deleteSession("current");
+    setUser(null);
+  };
 
   const handleLogin = async (e, credentials) => {
     e.preventDefault();
@@ -21,7 +38,30 @@ export const AuthProvider = ({ children }) => {
         credentials.password
       );
       console.log(response);
+      const accountDetails = await account.get();
+      setUser(accountDetails);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRegister = async (e, credentials) => {
+    e.preventDefault();
+    if (credentials.password1 !== credentials.password2) {
+      alert("Password does not matched");
+      return;
+    }
+    try {
+      let response = await account.create(
+        ID.unique(),
+        credentials.email,
+        credentials.password1,
+        credentials.name
+      );
+      await account.createEmailSession(credentials.email, credentials.password1);
       const accountDetails = account.get();
+      // console.log()
       setUser(accountDetails);
       navigate("/");
     } catch (error) {
@@ -32,6 +72,8 @@ export const AuthProvider = ({ children }) => {
   const contextData = {
     user,
     handleLogin,
+    handleUserLogout,
+    handleRegister,
   };
   return (
     <AuthContext.Provider value={contextData}>
